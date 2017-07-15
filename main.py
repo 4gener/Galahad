@@ -11,7 +11,7 @@ while (True):
 
     machines = soup('dl')
 
-    free = False;
+    free = False
 
     for machine in machines[-3:]:
         number = machine('b')[0].string
@@ -21,8 +21,11 @@ while (True):
         if status == 'free':
             free = True
             print('Lucky for you! Go get the damn machine!')
+        else:
+            ETF = machine.span.get_text().split('\n')[1]
+            print('Estimated time of finish:', ETF)
 
-    print('Last checked time:', )
+    print('Last checked time:', end=' ')
     print(time.strftime("%H:%M:%S", time.localtime()))
 
     if free:
@@ -30,4 +33,4 @@ while (True):
         print('\a')
         exit(0)
 
-time.sleep(15)
+    time.sleep(15)
