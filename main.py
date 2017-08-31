@@ -1,36 +1,44 @@
 import requests
 from bs4 import BeautifulSoup
 import time
-import pync
+import json
+from pync import Notifier
+
+building = input('Please input the building number:')
+
+with open('config.json', encoding='utf-8') as chart:
+    load = json.load(chart)
+    buildingNo = load[building]
 
 while (True):
 
-    page = requests.get('http://www.iskyct.com/www/Uwash/shopsearch/shopdetail.jsp?SHOP_CD=617')
+    page = requests.get('http://www.iskyct.com/www/Uwash/shopsearch/shopdetail.jsp?SHOP_CD={}'.format(str(buildingNo)))
 
     soup = BeautifulSoup(page.text, 'html.parser')
 
-    machines = soup('dl')
+    machines = soup('div', 'index_list2_con')
 
-    free = False
+    for machineType in machines:
 
-    for machine in machines[-3:]:
-        number = machine('b')[0].string
-        status = machine.attrs['class'][0]
+        print(machineType('h2')[0].string)
 
-        print(number + "Machine", status)
-        if status == 'free':
-            free = True
-            print('Lucky for you! Go get the damn machine!')
-        else:
-            ETF = machine.span.get_text().split('\n')[1]
-            print('Estimated time of finish:', ETF)
+        for machine in machineType('dl'):
+            number = machine('b')[0].string
+            status = machine.attrs['class'][0]
+
+            print(number + "Machine", status)
+            if status == 'free':
+                free = True
+                print('Lucky for you!')
+                Notifier.notify('Let\'s fucking go!', title='igulu')
+            elif status == 'offline':
+                pass
+            else:
+                ETF = machine.span.get_text().split('\n')[1]
+                print('Estimated time of finish:', ETF)
+
+        print()
 
     print('Last checked time:', end=' ')
     print(time.strftime("%H:%M:%S", time.localtime()))
-
-    if free:
-        pync.Notifier.notify('GOOOOOOOOO!')
-        print('\a')
-        exit(0)
-
     time.sleep(15)
