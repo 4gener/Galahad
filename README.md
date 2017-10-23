@@ -10,7 +10,7 @@ This project is designed to monitor the devices' occupancy of the laundry rooms 
 
 * installation of following python libraries
 
-  `bs4` `pync` `requests` 
+  `bs4`  `requests` 
 
 ### Run
 
